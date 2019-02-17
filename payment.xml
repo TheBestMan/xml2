@@ -1,0 +1,10 @@
+<class>
+    <name description="описание класса">CRM_Cash_Payment_Cash</name>
+    <property type="string" description="на дату" codegen="true">ondate</property>
+    <property type="string" description="исполнитель" codegen="true">user</property>
+    <property type="float" description="рубль" codegen="true">rur</property>
+    <property type="float" description="доллар" codegen="true">usd</property>
+    <property type="float" description="евро" codegen="true">eur</property>
+    <property type="float" description="фунты" codegen="true">gbp</property>
+    <property type="bool" description="статус" codegen="true">active</property>
+</class>
