@@ -16,6 +16,7 @@ class ClassObject {
 
     public function __construct() {
         $this->codegen = true;
+        $this->description = '';
     }
 
     /**
