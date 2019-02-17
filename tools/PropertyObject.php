@@ -10,7 +10,7 @@ class PropertyObject {
      */
     private $type;
     /**
-     * @var string
+     * @var string | null
      */
     private $description;
     /**
@@ -20,6 +20,7 @@ class PropertyObject {
 
     public function __construct() {
         $this->codegen = true;
+        $this->type = 'string';
     }
 
     /**
@@ -65,9 +66,17 @@ class PropertyObject {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getDescription(): string {
+    public function getDescription(): ?string {
         return $this->description;
     }
+
+    /**
+     * @return bool
+     */
+    public function isCodegen(): bool {
+        return $this->codegen;
+    }
+
 }

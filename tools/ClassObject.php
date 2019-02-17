@@ -52,4 +52,12 @@ class ClassObject {
     public function getDescription(): string {
         return $this->description;
     }
+
+    /**
+     * @return bool
+     */
+    public function isCodegen(): bool {
+        return $this->codegen;
+    }
+
 }

@@ -37,7 +37,7 @@ class Xml2PhpClass {
                         if (!empty($xr->getAttribute('description'))) {
                             $class->setDescription($xr->getAttribute('description'));
                         }
-                        $codegen = ($xr->getAttribute('codegen') == 'true') ? true : false;
+                        $codegen = (!empty($xr->getAttribute('codegen')) && $xr->getAttribute('codegen') == 'false') ? false : true;
                         $class->setCodegen($codegen);
                         $this->class->setClass($class);
                         break;
@@ -50,7 +50,7 @@ class Xml2PhpClass {
                         if (!empty($xr->getAttribute('description'))) {
                             $property->setDescription($xr->getAttribute('description'));
                         }
-                        $codegen = ($xr->getAttribute('codegen') == 'true') ? true : false;
+                        $codegen = (!empty($xr->getAttribute('codegen')) && $xr->getAttribute('codegen') == 'false') ? false : true;
                         $property->setCodegen($codegen);
                         $this->class->addProperty($property);
                         break;
@@ -90,25 +90,37 @@ class Xml2PhpClass {
         $this->pathDestination .= $path;
     }
 
+    /**
+     * @return bool
+     */
     private function createFile(): bool {
         $path = $this->class->getClass()->getName();
+        $url = str_replace('_', ':', strtolower($path));
         $className = explode('_', $path);
-        $className = end($className) . '.php';
-        $content = "<?php\n\n";
-        $content .= "/**\n";
-        $content .= " * {$this->class->getClass()->getDescription()}\n";
-        $content .= " * @xmlns urn:ru:ilb:meta:" . str_replace('_', ':', strtolower($path)) . "\n";
-        $content .= " * @xmlname Balance\n";
-        $content .= " * @codegenold true\n";
-        $content .= " */\n";
-        $content .= "class {$this->class->getClass()->getName()} implements Adaptor_XML {\n";
+        $className = end($className);
+        $codegenold = ($this->class->getClass()->isCodegen()) ? 'true' : 'false';
+
+        $content = <<<EOF
+<?php
+/**
+ * {$this->class->getClass()->getDescription()}
+ * @xmlns urn:ru:ilb:meta:{$url}
+ * @xmlname {$className}
+ * @codegenold {$codegenold}
+ */
+class {$this->class->getClass()->getName()} implements Adaptor_XML {
+
+
+EOF;
 
         // свойства
         foreach ($this->class->getProperty() as $property) {
+            $codegenold = ($property->isCodegen()) ? 'true' : 'false';
             $content .= <<<EOF
     /**
      * {$property->getDescription()}
      * @var {$property->getType()}
+     * @codegenold {$codegenold}
      */
     private \${$property->getName()};
 
@@ -120,11 +132,12 @@ EOF;
         // getter
         foreach ($this->class->getProperty() as $property) {
             $method = ucfirst($property->getName());
+            $prefix = ($property->getType() == 'bool' || $property->getType() == 'boolean') ? 'is' : 'get';
             $content .= <<<EOF
     /**
      * @return {$property->getType()}
      */
-    public function get{$method}() {
+    public function {$prefix}{$method}() {
         return \$this->{$property->getName()};
     }
 
@@ -193,8 +206,8 @@ EOF;
 EOF;
 
 
-        file_put_contents($this->pathDestination . '/' . $className, $content);
+        file_put_contents($this->pathDestination . '/' . $className . '.php', $content);
 
-        return (file_exists($this->pathDestination . '/' . $className) ? true : false);
+        return (file_exists($this->pathDestination . '/' . $className . '.php') ? true : false);
     }
 }
