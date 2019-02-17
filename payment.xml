@@ -6,5 +6,7 @@
     <property type="float" description="доллар" codegen="true">usd</property>
     <property type="float" description="евро" codegen="true">eur</property>
     <property type="float" description="фунты" codegen="true">gbp</property>
-    <property type="bool" description="статус" codegen="true">active</property>
+    <property type="bool" description="статус">active</property>
+    <property description="без типа">lostType</property>
+    <property>simpleProperty</property>
 </class>
